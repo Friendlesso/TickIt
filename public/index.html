@@ -4,10 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <link rel="stylesheet" href="./output.css">
+  <link rel="stylesheet" href="output.css">
 </head>
 <body>
-  <button class="bg-sky-500 hover:bg-sky-700 px-5 rounded-md">Hello</button>
-  <p class="bg-amber-400">hi</p>
+  <div class="container">
+    <div class="left-section">
+      <div class="search-container flex flex-row items-center">
+        <form action="/search" method="GET" class="flex items-center">
+          <input type="search" id="search-input" class=" border border-solid border-color placeholder:text-gray-500 " name="query" placeholder="Search for tasks">
+          <button type="submit" class="bg-[url('../public/assets/search.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 button-color mx-2 cursor-pointer"></button>
+        </form>
+        <button class="switch-mode bg-[url('../public/assets/darkTheam.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 button-color cursor-pointer" alt></button>
+      </div>
+      <div class="todays-tasks"></div>
+    </div>
+    <div class="right-section"></div>
+  </div>
 </body>
 </html>

@@ -18,10 +18,14 @@ module.exports = {
       },
     },
     extend: {
+      backgroundImages: {
+        'dark-mode':"url('public/assets/darkTheam.svg')"
+      },
       colors: {
         primary: '#1D4ED8', 
         secondary: '#9333EA', 
         accent: '#F59E0B', 
+        buttons: '#8052EC'
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
