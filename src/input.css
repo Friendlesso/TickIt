@@ -1,7 +1,12 @@
 @import "tailwindcss";
 
-.button-color {
-  background-color: #8052EC;
+:root{
+  --gradient-start: #BD5CF4; 
+  --gradient-end: #9255F0; 
+  --button-color: #8052EC;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+
 }
 
 .border-color {

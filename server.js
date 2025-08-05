@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 // const routes = require('./routes');
 const path = require('path');
+const Task = require('./models/task');
+
 require('dotenv').config();
 
 const app = express();
@@ -9,7 +11,11 @@ const PORT = process.env.PORT || 3000;
 
 //MongoDb connection
 mongoose.connect(process.env.MONGO_URI,)
-  .then(() => console.log('Connected to MongoDb Atlas'))
+  .then(async() => {
+    console.log('Connected to MongoDb Atlas');
+    const tasks = await Task.find();
+    console.log(tasks);
+  })
   .catch(err => console.error('MongoDB connection error:', err));
 
 //Middleware
