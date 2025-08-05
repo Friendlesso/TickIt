@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/css/output.css">
+</head>
+<body class="bg-gradient-to-r from-fuchsia-400 to-violet-400">
+  <div class="container flex flex-col lg:flex-row min-h-screen px-4">
+    <div class="left-section w-full lg:w-1/2 p-4 overflow-x-auto">
+      <div class="search-container flex items-center w-full gap-2 bg-white px-4 py-2 rounded-xl mb-5">
+        <form action="/search" method="GET" class="flex flex-grow items-center w-full lg:w-1/2 gap-2">
+          <input type="search" id="search-input" class="flex-grow border border-solid border-color rounded-sm placeholder:text-gray-500 px-1 " name="query" placeholder="Search for tasks">
+          <button type="submit" class="bg-[url('/assets/search.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 button-color mx-2 cursor-pointer"></button>
+        </form>
+        <button class="switch-mode bg-[url('/assets/darkTheam.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 button-color cursor-pointer" alt></button>
+      </div>
+      <div class="todays-tasks flex flex-col w-full gap-2 bg-white rounded-xl py-2">
+        <div class="tasks-header flex justify-between items-center px-4">
+          <p class="text-lg">Todays tasks</p>
+          <p class="js-date text-lg"></p>
+        </div>
+        <div class="display-tasks">
+          <div class="task flex flex-col">
+            <div class="flex justify-between">
+              <h3 class="text-xl">Finish homework</h3>
+              <img src="/assets/Frame 38.svg" alt="">
+            </div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right-section"></div>
+  </div>
+  <script src="/js/main.js" type="module"></script>
+</body>
+</html>
