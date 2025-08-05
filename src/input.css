@@ -4,15 +4,8 @@
   --gradient-start: #BD5CF4; 
   --gradient-end: #9255F0; 
   --button-color: #8052EC;
+  --input-border: #C3C5C7;
+  --placeholder-text: #6B6B6B;
   --success-color: #28a745;
   --danger-color: #dc3545;
-
-}
-
-.border-color {
-  border-color: #C3C5C7;
-}
-
-.sub-text {
-  color: #6B6B6B;
 }

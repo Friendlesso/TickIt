@@ -28,8 +28,9 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
 
 //Routes
-app.get('/', (req, res) => {
-  res.render('index');
+app.get('/', async (req, res) => {
+  const tasks = await Task.find();
+  res.render('index', {tasks});
 })
 // app.use(routes);
 

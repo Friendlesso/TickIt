@@ -6,40 +6,75 @@
   <title>Document</title>
   <link rel="stylesheet" href="/css/output.css">
 </head>
-<body class="min-h-screen bg-linear-to-r from-[var(--gradient-start)] to-[var(--gradient-end)]">
-  <div class="container flex flex-col lg:flex-row min-h-screen px-4">
+<body class=" app min-h-screen bg-linear-to-r from-[var(--gradient-start)] to-[var(--gradient-end)]">
+  <div class="app__container flex flex-col lg:flex-row min-h-screen px-4">
     <div class="left-section w-full lg:w-1/2 p-4 overflow-x-auto">
       <div class="search-container flex items-center w-full gap-2 bg-white px-4 py-2 rounded-xl mb-5">
         <form action="/search" method="GET" class="flex flex-grow items-center w-full lg:w-1/2 gap-2">
-          <input type="search" id="search-input" class="flex-grow border border-solid border-color rounded-sm placeholder:text-gray-500 px-1 " name="query" placeholder="Search for tasks">
+          <input type="search" id="search-input" class="flex-grow border border-solid border-[var(--input-border)] rounded-sm placeholder:text-[var(--placeholder-text)] px-1 " name="query" placeholder="Search for tasks">
           <button type="submit" class="bg-[url('/assets/search.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 bg-[var(--button-color)] mx-2 cursor-pointer"></button>
         </form>
         <button class="switch-mode bg-[url('/assets/darkTheam.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 bg-[var(--button-color)] cursor-pointer" alt></button>
       </div>
-      <div class="todays-tasks flex flex-col w-full gap-2 bg-white rounded-xl py-2">
-        <div class="tasks-header flex justify-between items-center px-4">
-          <p class="text-lg">Todays tasks</p>
-          <p class="js-date text-lg"></p>
-        </div>
-        <div class="display-tasks">
-          <div class="task flex flex-col mx-4 pb-2.5 border-gray-400 border-b-1">
-            <div class=" flex justify-between pb-1.5"><!--Add classes to understand what is what -->
-              <p class="text-xl">Finish homework</p>
-              <img src="/assets/Frame 38.svg" alt=""><!--Change name of the image-->
-            </div>
-            <div class="flex justify-between">
-              <p class="text-base">Finish untill: 18:45pm</p>
-              <div class="buttons flex items-center gap-2">
-                <button class="bg-[url('/assets/edit.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer"></button>
-                <button class="bg-[url('/assets/finish.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer"></button>
-                <button class="bg-[url('/assets/delete.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer"></button>
+      <!-- Use Bem above and belowe -->
+      <section class="tasks tasks--today flex flex-col w-full bg-white rounded-xl gap-2 py-2">
+    
+        <header class="tasks__header flex justify-between items-center px-4 mb-4">
+          <p class="tasks__title text-lg">Todays tasks</p>
+          <p class="tasks__date js-date text-lg"></p>
+        </header>
+
+        <div class="tasks__list display-tasks flex flex-col">
+          <% tasks.forEach(task => {%>
+          <article class="task task--item flex flex-col mx-4 mb-7 pb-2.5 border-gray-400 border-b-1">
+            <div class="task__top flex justify-between pb-1.5 align-top"><!--Add classes to understand what is what -->
+              <p class="task__title text-xl"><%= task.title %></p>
+              <div class="task__type flex items-center bg-[var(--button-color)] p-2 rounded-sm">
+                <p class="task__type--lable text-white pr-1"><%= task.type %></p>
+                <img class="task__type--icon w-5 h-5" src="/assets/button_icons/<%= task.type %>.svg"  alt="Task type">
               </div>
             </div>
-          </div>
+            <div class="task__bottom flex justify-between">
+              <p class="task__due text-base">Finish untill: 18:45pm</p>
+              <div class="task__buttons flex items-center gap-2">
+                <button class="buttons__edit bg-[url('/assets/edit.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer"></button>
+                <button class="buttons__finish bg-[url('/assets/finish.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer"></button>
+                <button class="buttons__delete bg-[url('/assets/delete.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer"></button>
+              </div>
+            </div>
+          </article>
+          <% });  %>
+        </div>
+      </section>
+    </div>
+    <div class="app__main right-section w-full lg:w-1/2 p-4 overflow-x-auto">
+      <div class="add-task add-task--section w-full bg-white px-4 py-2 rounded-xl mb-5">
+        <h3 class=" text-lg mb-4">Add a Task</h3>
+        <div class="input-filds">
+          <form action="/save" method="POST" class="flex flex-col">
+            <input class="flex border border-[var(--input-border)] rounded-sm placeholder:text-[var(--placeholder-text)] px-1" type="text" name="title" placeholder="Task title"><br>
+            <div class="dropdown relative w-full">
+              <div class="dropdown__select">
+                Select task type
+              </div>
+              <!-- Add aria attributes or labels for better accessibility and use Alt for icons -->
+              <div class="dropdown__options hidden">
+                <div class="dropdown__option" data-value="gym">Gym</div>
+                <div class="dropdown__option" data-value="hobbys">Hobbys</div>
+                <div class="dropdown__option" data-value="personal">Personal</div>
+                <div class="dropdown__option" data-value="school">School</div>
+                <div class="dropdown__option" data-value="shoping">Shoping</div>
+                <div class="dropdown__option" data-value="work">Work</div>
+                <div class="dropdown__option" data-value="urgent">Urgent</div>
+                <div class="dropdown__option" data-value="other">Other</div>
+              </div>
+            </div>
+            <input type="hidden" name="type" id="dropdown-selected">
+            <input type="time" name="due" id="" placeholder="Task deadline"><br>
+          </form>
         </div>
       </div>
     </div>
-    <div class="right-section"></div>
   </div>
   <script src="/js/main.js" type="module"></script>
 </body>
