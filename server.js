@@ -11,10 +11,8 @@ const PORT = process.env.PORT || 3000;
 
 //MongoDb connection
 mongoose.connect(process.env.MONGO_URI,)
-  .then(async() => {
+  .then(() => {
     console.log('Connected to MongoDb Atlas');
-    const tasks = await Task.find();
-    console.log(tasks);
   })
   .catch(err => console.error('MongoDB connection error:', err));
 
@@ -32,6 +30,23 @@ app.get('/', async (req, res) => {
   const tasks = await Task.find();
   res.render('index', {tasks});
 })
+
+app.post('/save', async (req, res) => {
+  const { title, due, type } = req.body;
+
+  try {
+    await Task.create({
+      title,
+      Deadline: due,
+      type,
+    });
+
+    res.redirect('/');
+  } catch (err) {
+    console.error('Error saving task:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
 // app.use(routes);
 
 //Start server

@@ -8,4 +8,28 @@
   --placeholder-text: #6B6B6B;
   --success-color: #28a745;
   --danger-color: #dc3545;
+
+  --shadow-offset-x: 0px;
+  --shadow-offset-y: 2px;
+  --shadow-blur: 6px;
+  --shadow-spred:0px;
+  --shadow-color: rgba(0, 0, 0, 0.25);
+
+
+  --transiton-duration: 0.4s
+}
+
+.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown__options div {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.dropdown__options div:hover{
+  background-color: rgb(221, 221, 221);
 }
