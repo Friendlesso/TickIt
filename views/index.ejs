@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>TickIt</title>
   <link rel="stylesheet" href="/css/output.css">
 </head>
 <body class=" app min-h-screen bg-linear-to-r from-[var(--gradient-start)] to-[var(--gradient-end)]">
@@ -12,9 +12,9 @@
       <div class="search-container flex items-center w-full gap-2 bg-white px-4 py-2 rounded-xl mb-5">
         <form action="/search" method="GET" class="flex flex-grow items-center w-full lg:w-1/2 gap-2">
           <input type="search" id="search-input" class="flex-grow border border-solid border-[var(--input-border)] rounded-sm placeholder:text-[var(--placeholder-text)] px-1 " name="query" placeholder="Search for tasks">
-          <button type="submit" class="bg-[url('/assets/search.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 bg-[var(--button-color)] mx-2 cursor-pointer"></button>
+          <button type="submit" class="bg-[url('/assets/search.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 bg-[var(--button-color)] mx-2 cursor-pointer" aria-label="Search tasks"></button>
         </form>
-        <button class="switch-mode bg-[url('/assets/darkTheam.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 bg-[var(--button-color)] cursor-pointer" alt></button>
+        <button class="switch-mode bg-[url('/assets/darkTheam.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 bg-[var(--button-color)] cursor-pointer" aria-label="Switch theam mode"></button>
       </div>
       <!-- Use Bem above and belowe -->
       <section class="tasks tasks--today flex flex-col w-full bg-white rounded-xl gap-2 py-2">
@@ -25,8 +25,8 @@
         </header>
 
         <div class="tasks__list display-tasks flex flex-col">
-          <% tasks.forEach(task => {%>
-          <article class="task task--item flex flex-col mx-4 mb-7 pb-2.5 border-gray-400 border-b-1">
+          <% todaysTasks.forEach(task => {%>
+          <article class="task task--item flex flex-col mx-4 mb-7 pb-2.5 border-gray-400 border-b-1" draggable="true">
             <div class="task__top flex justify-between pb-1.5 align-top"><!--Add classes to understand what is what -->
               <p class="task__title text-xl"><%= task.title %></p>
               <div class="task__type flex items-center bg-[var(--button-color)] p-2 rounded-sm">
@@ -35,11 +35,11 @@
               </div>
             </div>
             <div class="task__bottom flex justify-between">
-              <p class="task__due text-base">Finish untill: 18:45pm</p>
+              <p class="task__due text-base">Finish untill: <%= task.Deadline %></p>
               <div class="task__buttons flex items-center gap-2">
-                <button class="buttons__edit bg-[url('/assets/edit.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer"></button>
-                <button class="buttons__finish bg-[url('/assets/finish.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer"></button>
-                <button class="buttons__delete bg-[url('/assets/delete.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer"></button>
+                <button class="buttons__edit bg-[url('/assets/edit.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Edit task button"></button>
+                <button class="buttons__finish bg-[url('/assets/finish.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Complete task button" data-id="<%= task._id %>"></button>
+                <button class="button__delete bg-[url('/assets/delete.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Delete task button" data-id="<%= task._id %>"></button>
               </div>
             </div>
           </article>
@@ -49,12 +49,11 @@
     </div>
     <div class="app__main right-section w-full lg:w-1/2 p-4 overflow-x-auto">
       <div class="add-task add-task--section w-full bg-white px-4 py-2 rounded-xl mb-5">
-
         <div class="input-filds">
           <form action="/save" method="POST" class="flex flex-col ">
             <header class="flex justify-between">
               <h3 class=" text-lg mb-4">Add a Task</h3>
-              <button type="submit" class="mb-4 bg-[var(--button-color)] rounded-sm text-white text-lg px-4 py-2 cursor-pointer">Save</button>
+              <button type="submit" class="mb-4 bg-[var(--button-color)] rounded-sm text-white text-lg px-4 py-2 cursor-pointer" aria-label="Save task">Save</button>
             </header>
             <input class="flex shadow-[var(--shadow-offset-x)var(--shadow-offset-y)var(--shadow-blur)var(--shadow-spred)var(--shadow-color)] rounded-sm placeholder:text-[var(--placeholder-text)] p-1.5 mb-5" type="text" name="title" placeholder="Task title">
             <input type="time" name="due" id="" class=" rounded-sm p-1.5 mb-5 shadow-[var(--shadow-offset-x)var(--shadow-offset-y)var(--shadow-blur)var(--shadow-spred)var(--shadow-color)]">
@@ -66,20 +65,36 @@
               <div class="dropdown__options absolute top-10 w-full bg-white rounded-sm opacity-0 invisible transform translate-y-2.5 transition duration-600 ease overflow-hidden mx-[-6px] shadow-[var(--shadow-offset-x)var(--shadow-offset-y)var(--shadow-blur)var(--shadow-spred)var(--shadow-color)]">
                 <div class="dropdown__option" data-value="Gym">Gym</div>
                 <div class="dropdown__option" data-value="Hobby">Hobby</div>
-                <div class="dropdown__option" data-value="personal">Personal</div>
-                <div class="dropdown__option" data-value="school">School</div>
-                <div class="dropdown__option" data-value="shoping">Shoping</div>
-                <div class="dropdown__option" data-value="work">Work</div>
-                <div class="dropdown__option" data-value="urgent">Urgent</div>
-                <div class="dropdown__option" data-value="other">Other</div>
+                <div class="dropdown__option" data-value="Personal">Personal</div>
+                <div class="dropdown__option" data-value="School">School</div>
+                <div class="dropdown__option" data-value="Shoping">Shoping</div>
+                <div class="dropdown__option" data-value="Work">Work</div>
+                <div class="dropdown__option" data-value="Urgent">Urgent</div>
+                <div class="dropdown__option" data-value="Other">Other</div>
               </div>
             </div>
-
             <input type="hidden" name="type" id="dropdown-selected">
           </form>
-
         </div>
       </div>
+      <section class="tasks tasks--completed flex flex-col w-full bg-white rounded-xl gap-2 py-2">
+        <header class="tasks__header flex items-center px-4 mb-4">
+          <p class="tasks__title text-lg">Completed Tasks</p>
+        </header>
+        <div class="tasks__list flex flex-col">
+          <% completedTasks.forEach(task => { %>
+            <article class="task task--item flex items-center justify-between mx-4 mb-7 pb-2.5 border-gray-400 border-b-1">
+              <p class="task__title text-xl mr-3"><%= task.title %></p>
+              <div class="task__type flex items-center bg-[var(--button-color)] p-2 rounded-sm">
+                <p class="task__type--lable text-white pr-1"><%= task.type %></p>
+                <img class="task__type--icon w-5 h-5" src="/assets/button_icons/<%= task.type %>.svg" alt="task type">
+              </div>
+                              <button class="button__delete bg-[url('/assets/delete.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Delete task button" data-id="<%= task._id %>"></button>
+            </article>
+          <% }); %>
+
+        </div>
+      </section>
     </div>
   </div>
   <script src="/js/main.js" type="module"></script>

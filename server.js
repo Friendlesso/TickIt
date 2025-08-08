@@ -27,18 +27,30 @@ app.set('views', path.join(__dirname, 'views'))
 
 //Routes
 app.get('/', async (req, res) => {
-  const tasks = await Task.find();
-  res.render('index', {tasks});
+  try {
+    const allTasks = await Task.find();
+    const todaysTasks = allTasks.filter(task => !task.completed);
+    const completedTasks = allTasks.filter(task => task.completed);
+    
+    res.render('index', {
+      todaysTasks,
+      completedTasks
+    });
+  } catch(err) {
+    console.error('Error mesage:', err);
+    res.status(500).send('Server error');
+  }
 })
 
 app.post('/save', async (req, res) => {
-  const { title, due, type } = req.body;
+  const { title, due, type ,} = req.body;
 
   try {
     await Task.create({
       title,
       Deadline: due,
       type,
+      completed: false,
     });
 
     res.redirect('/');
@@ -47,6 +59,28 @@ app.post('/save', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+app.post('/finish', async (req, res) => {
+  let id = req.body.id;
+  try{
+    await Task.findByIdAndUpdate(id, {completed : true});
+    res.status(200).json({success:true});
+  } catch (err) {
+    console.error('Error deleting:', err);
+    res.status(500).json({success: false});
+  }
+})
+
+app.post('/delete', async (req,res) => {
+  let id = req.body.id;
+  try {
+    await Task.findByIdAndDelete(id);
+    res.status(200).json({success:true});
+  } catch (err) {
+    console.error('Error deleting:', err);
+    res.status(500).json({success: false});
+  }
+})
 // app.use(routes);
 
 //Start server
