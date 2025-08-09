@@ -2,6 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 // const routes = require('./routes');
 const path = require('path');
+// Secure code from injection attacks
+const Joi = require('joi');
+const helmet = require('helmet');
+const sanitize = require('mongo-sanitize');
+//Task scheme
 const Task = require('./models/task');
 
 require('dotenv').config();
@@ -11,19 +16,34 @@ const PORT = process.env.PORT || 3000;
 
 //MongoDb connection
 mongoose.connect(process.env.MONGO_URI,)
-  .then(() => {
-    console.log('Connected to MongoDb Atlas');
-  })
+  .then(() => {console.log('Connected to MongoDb Atlas');})
   .catch(err => console.error('MongoDB connection error:', err));
 
 //Middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc:["'self'", "https://cdn.jsdelivr.net"]
+    }
+  }
+}));
 app.use(express.static(__dirname + "/public"));
-app.use(express.json());
+app.use(express.json({limit: '10kb'}));
 app.use(express.urlencoded({extended: true}));
 
 //View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
+
+//Validation schema
+
+const taskSchema = Joi.object({
+  title: Joi.string().max(30).required().trim(),
+  type: Joi.string().max(10).required().trim(),
+  due: Joi.string().optional().allow(null, '').trim(),
+
+});
 
 //Routes
 app.get('/', async (req, res) => {
@@ -43,16 +63,17 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/save', async (req, res) => {
-  const { title, due, type ,} = req.body;
-
+  const {error, value} = taskSchema.validate(req.body);
+  if(error) {
+    return res.status(400).send('Invalid input:' + error.details[0].message);
+  }
   try {
     await Task.create({
-      title,
-      Deadline: due,
-      type,
+      title: sanitize(value.title),
+      Deadline: value.due || null,
+      type: sanitize(value.type),
       completed: false,
     });
-
     res.redirect('/');
   } catch (err) {
     console.error('Error saving task:', err);
@@ -61,7 +82,11 @@ app.post('/save', async (req, res) => {
 });
 
 app.post('/finish', async (req, res) => {
-  let id = req.body.id;
+  let id = sanitize(req.body.id);
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({success: false, error: "invalid Id"});
+  }
+  
   try{
     await Task.findByIdAndUpdate(id, {completed : true});
     res.status(200).json({success:true});
@@ -72,7 +97,11 @@ app.post('/finish', async (req, res) => {
 })
 
 app.post('/delete', async (req,res) => {
-  let id = req.body.id;
+  let id = sanitize(req.body.id);
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({success: false, error: "invalid Id"});
+  }
+
   try {
     await Task.findByIdAndDelete(id);
     res.status(200).json({success:true});
