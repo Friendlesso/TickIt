@@ -1,7 +1,9 @@
   import dayjs from "https://cdn.jsdelivr.net/npm/dayjs@1.11.7/+esm";
 document.addEventListener('DOMContentLoaded', () => {
+  switchThemes()
   finishTask()
   deleteTask();
+  editTask();
   formTypeDropdown();
   displayDate(dayjs);
 })
@@ -14,18 +16,35 @@ function displayDate(dayjs) {
 }
 
 function formTypeDropdown(){
-  const select = document.querySelector('.dropdown__select');
-  const options = document.querySelector('.dropdown__options');
+  const dropdowns = document.querySelectorAll('.dropdown');
 
-  document.addEventListener('click', (e) => {
-    if(e.target.closest('.dropdown__select')) options.classList.toggle('show');
-    else options.classList.remove('show');
+  dropdowns.forEach(dropdown => {
+    const select = dropdown.querySelector('.dropdown__select');
+    const options = dropdown.querySelector('.dropdown__options');
+    const hiddenInput = dropdown.querySelector('input[type="hidden"]');
+     console.log('hiddenInput:', hiddenInput); 
 
-    if(e.target.closest('.dropdown__options div')){
-      select.textContent = e.target.textContent;
-      document.getElementById('dropdown-selected').value = e.target.getAttribute('data-value');
-      options.classList.remove('show');
-    }
+    select.addEventListener('click', e => {
+      e.stopPropagation();
+      options.classList.toggle('show');
+    });
+
+    options.querySelectorAll('div').forEach(option => {
+      option.addEventListener('click', e => {
+        select.textContent = option.textContent;
+        if(hiddenInput && hiddenInput.tagName === 'INPUT' && hiddenInput.type === 'hidden'){
+          hiddenInput.value = option.getAttribute('data-value');
+        }
+        options.classList.remove('show');
+      });
+    });
+
+    document.addEventListener('click', () => {
+      dropdowns.forEach(dropdown => {
+        const options = dropdown.querySelector('.dropdown__options');
+        options.classList.remove('show');
+      });
+    });
   })
 }
 
@@ -53,7 +72,7 @@ function deleteTask(){
 }
 
 function finishTask(){
-  document.querySelectorAll('.buttons__finish').forEach(btn => {
+  document.querySelectorAll('.button__finish').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.id;
       try{
@@ -74,3 +93,48 @@ function finishTask(){
   });
 }
 
+
+function editTask(){
+  const editModal = document.getElementById('edit-modal');
+  const closeBtn = document.getElementById('edit-modal__close');
+
+  document.querySelectorAll('.button__edit').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+
+      const id = btn.dataset.id;
+      const title = btn.dataset.title;
+      const type = btn.dataset.type;
+      const deadline = btn.dataset.deadline;
+
+      document.getElementById('edit-task-form__id').value = id || '';
+      document.getElementById('edit-task-form__title').value = title || '';
+      document.getElementById('edit-task-form__deadline').value = deadline || '';
+
+      const hiddenInput = document.getElementById('dropdown-selected-edit');
+      if(hiddenInput) hiddenInput.value = type || '';
+
+      const dropdownSelect = editModal.querySelector('.dropdown__select p');
+      if(dropdownSelect) {
+        dropdownSelect.textContent = type || 'Select task type';
+      }
+
+      editModal.classList.remove('hidden');
+    });
+  });
+
+  closeBtn.addEventListener('click', () => {
+    editModal.classList.add('hidden');
+  })
+}
+
+function switchThemes() {
+  const root = document.documentElement;
+  const switchBtn = document.querySelector('.switch-mode');
+
+  if (!switchBtn) return;
+
+  switchBtn.addEventListener('click', () => {
+    root.classList.toggle('dark');
+  });
+}

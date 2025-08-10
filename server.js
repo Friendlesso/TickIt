@@ -39,6 +39,7 @@ app.set('views', path.join(__dirname, 'views'))
 //Validation schema
 
 const taskSchema = Joi.object({
+  id: Joi.string().optional(),
   title: Joi.string().max(30).required().trim(),
   type: Joi.string().max(10).required().trim(),
   due: Joi.string().optional().allow(null, '').trim(),
@@ -80,6 +81,30 @@ app.post('/save', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+app.post('/edit', async (req,res) => {
+  const {error,value} = taskSchema.validate(req.body);
+  if(error) {
+    return res.status(400).send('Invalid input:' + error.details[0].message);
+  }
+  try{
+    const taskId = sanitize(req.body.id);
+    if(!taskId) {
+      return res.status(400).send('Task ID is required');
+    }
+
+    await Task.findByIdAndUpdate(taskId, {
+      title: sanitize(value.title),
+      Deadline: value.due || null,
+      type: sanitize(value.type),
+      completed: false,
+    });
+    res.redirect('/')
+  } catch (err) {
+    console.error('Error saving task:', err);
+    res.status(500).send('Internal Server Error');
+  }
+})
 
 app.post('/finish', async (req, res) => {
   let id = sanitize(req.body.id);

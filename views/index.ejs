@@ -12,7 +12,7 @@
       <div class="search-container flex items-center w-full gap-2 bg-white px-4 py-2 rounded-xl mb-5">
         <form action="/search" method="GET" class="flex flex-grow items-center w-full lg:w-1/2 gap-2">
           <input type="search" id="search-input" class="flex-grow border border-solid border-[var(--input-border)] rounded-sm placeholder:text-[var(--placeholder-text)] px-1 " name="query" placeholder="Search for tasks">
-          <button type="submit" class="bg-[url('/assets/search.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 bg-[var(--button-color)] mx-2 cursor-pointer" aria-label="Search tasks"></button>
+          <button type="submit" class=" bg-[var(--button-color)] bg-[url('/assets/search.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8  mx-2 cursor-pointer" aria-label="Search tasks"></button>
         </form>
         <button class="switch-mode bg-[url('/assets/darkTheam.svg')] bg-no-repeat bg-center rounded-sm w-8 h-8 bg-[var(--button-color)] cursor-pointer" aria-label="Switch theam mode"></button>
       </div>
@@ -26,7 +26,7 @@
 
         <div class="tasks__list display-tasks flex flex-col">
           <% todaysTasks.forEach(task => {%>
-          <article class="task task--item flex flex-col mx-4 mb-7 pb-2.5 border-gray-400 border-b-1" draggable="true">
+          <article class="task task--item flex flex-col mx-4 mb-7 pb-2.5 border-gray-400 border-b-1">
             <div class="task__top flex justify-between pb-1.5 align-top"><!--Add classes to understand what is what -->
               <p class="task__title text-xl"><%= task.title %></p>
               <div class="task__type flex items-center bg-[var(--button-color)] p-2 rounded-sm">
@@ -37,9 +37,14 @@
             <div class="task__bottom flex justify-between">
               <p class="task__due text-base">Finish untill: <%= task.Deadline %></p>
               <div class="task__buttons flex items-center gap-2">
-                <button class="buttons__edit bg-[url('/assets/edit.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Edit task button"></button>
-                <button class="buttons__finish bg-[url('/assets/finish.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Complete task button" data-id="<%= task._id %>"></button>
-                <button class="button__delete bg-[url('/assets/delete.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Delete task button" data-id="<%= task._id %>"></button>
+                <button class="button__edit bg-[url('/assets/edit.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Edit task button" 
+                data-id="<%= task._id %>"
+                data-title="<%= task.title %>"
+                data-type="<%= task.type %>"
+                data-deadline="<%= task.Deadline %>"
+                ></button>
+                <button class="button__finish bg-[url('/assets/finish.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)]  cursor-pointer" aria-label="Complete task button" data-id="<%= task._id %>"></button>
+                <button class=" btn-slide button__delete bg-[url('/assets/delete.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Delete task button" data-id="<%= task._id %>"></button>
               </div>
             </div>
           </article>
@@ -47,7 +52,7 @@
         </div>
       </section>
     </div>
-    <div class="app__main right-section w-full lg:w-1/2 p-4 overflow-x-auto">
+    <div class="app__main right-section w-full lg:w-1/2 p-4">
       <div class="add-task add-task--section w-full bg-white px-4 py-2 rounded-xl mb-5">
         <div class="input-filds">
           <form action="/save" method="POST" class="flex flex-col ">
@@ -71,9 +76,9 @@
                 <div class="dropdown__option" data-value="Work">Work</div>
                 <div class="dropdown__option" data-value="Urgent">Urgent</div>
                 <div class="dropdown__option" data-value="Other">Other</div>
+                <input type="hidden" name="type" id="dropdown-selected-add">
               </div>
             </div>
-            <input type="hidden" name="type" id="dropdown-selected">
           </form>
         </div>
       </div>
@@ -89,14 +94,56 @@
                 <p class="task__type--lable text-white pr-1"><%= task.type %></p>
                 <img class="task__type--icon w-5 h-5" src="/assets/button_icons/<%= task.type %>.svg" alt="task type">
               </div>
-                              <button class="button__delete bg-[url('/assets/delete.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Delete task button" data-id="<%= task._id %>"></button>
+              <button class="button__delete bg-[url('/assets/delete.svg')] w-8 h-8 bg-center bg-no-repeat rounded-sm bg-[var(--button-color)] cursor-pointer" aria-label="Delete task button" data-id="<%= task._id %>"></button>
             </article>
           <% }); %>
-
         </div>
       </section>
     </div>
   </div>
+  <section id="edit-modal" class="modal modal--hidden hidden flex items-center justify-center z-50 fixed inset-0 " role="dialog" aria-modal="ture" aria-labelledby="edit-modal__title" aria-describedby="edit-modal__desc">
+    <div class="modal__content flex-col items-center w-4/5 lg:w-1/2 sm:w-4/5  bg-white rounded-xl p-4">
+      <header class="modal__header flex justify-between">
+        <p id="edit-modal__title" class="modal__title text-lg">Edit task</p>
+        <button id="edit-modal__close" class="modal__close" aria-label="Close Edit Task">&times;</button>
+      </header>
+      <form id="edit-task-form" class="modal__form" method="POST" action="/edit" novalidate>
+        <input type="hidden" name="id" id="edit-task-form__id">
+        
+        <div class="modal__field flex items-center mb-5">
+          <label for="edit-task-form__title" class="modal__label mr-4">Task Title</label>
+          <input type="text" id="edit-task-form__title" name="title" class="modal__input flex w-4/5 shadow-[var(--shadow-offset-x)var(--shadow-offset-y)var(--shadow-blur)var(--shadow-spred)var(--shadow-color)] rounded-sm placeholder:text-[var(--placeholder-text)] p-1.5" required>
+        </div>
+
+        <div class="modal__field flex items-center mb-5">
+          <label for="edit-task-form__deadline" class="modal__label mr-4">Deadline</label>
+          <input type="time" id="edit-task-form__deadline" name="due" class="modal__input flex w-4/5  shadow-[var(--shadow-offset-x)var(--shadow-offset-y)var(--shadow-blur)var(--shadow-spred)var(--shadow-color)] rounded-sm placeholder:text-[var(--placeholder-text)] p-1.5">
+        </div>
+
+        <div class="modal__field flex items-center ">
+          <div class="dropdown relative w-2/3 mb-5 p-1.5 rounded-sm shadow-[var(--shadow-offset-x)var(--shadow-offset-y)var(--shadow-blur)var(--shadow-spred)var(--shadow-color)]">
+            <div class="dropdown__select flex justify-between items-center cursor-pointer after:content-['\25BC'] text-sm text-[var(--placeholder-text)]">
+              <p class="text-[var(--placeholder-text)]">Select task type</p>
+            </div>
+            <!-- Add aria attributes or labels for better accessibility and use Alt for icons -->
+            <div class="dropdown__options absolute top-10 w-full bg-white rounded-sm opacity-0 invisible transform translate-y-2.5 transition duration-600 ease overflow-hidden mx-[-6px] shadow-[var(--shadow-offset-x)var(--shadow-offset-y)var(--shadow-blur)var(--shadow-spred)var(--shadow-color)]">
+              <div class="dropdown__option" data-value="Gym">Gym</div>
+              <div class="dropdown__option" data-value="Hobby">Hobby</div>
+              <div class="dropdown__option" data-value="Personal">Personal</div>
+              <div class="dropdown__option" data-value="School">School</div>
+              <div class="dropdown__option" data-value="Shoping">Shoping</div>
+              <div class="dropdown__option" data-value="Work">Work</div>
+              <div class="dropdown__option" data-value="Urgent">Urgent</div>
+              <div class="dropdown__option" data-value="Other">Other</div>
+              <input type="hidden" name="type" id="dropdown-selected-edit">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="modal__submit-btn">Save</button>
+      </form>
+    </div>
+  </section>
   <script src="/js/main.js" type="module"></script>
 </body>
 </html>
