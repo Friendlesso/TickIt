@@ -12,6 +12,7 @@
   --danger-color: #dc3545;
 
   --text-color: #000000;
+  --box-color: #FFFFFF;
 
   --shadow-offset-x: 0px;
   --shadow-offset-y: 2px;
@@ -26,6 +27,7 @@
   --gradient-end: #5A3579;
   --box-bg-color:  #222222;
   --button-color: #5A297F;
+  --button-hover-color: #8052EC;
   --input-border: #C3C5C7;
   --placeholder-text: #6B6B6B;
 
@@ -33,12 +35,15 @@
   --danger-color: #dc3545;
 
   --text-color: #ffffff;
+  --box-color: #222222;
 
   --shadow-offset-x: 0px;
   --shadow-offset-y: 2px;
   --shadow-blur: 6px;
   --shadow-spred:0px;
   --shadow-color: rgba(255, 255, 255, 0.25);
+
+  color: #ffffff;
 }
 
 .show {
